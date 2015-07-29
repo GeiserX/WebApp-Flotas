@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="styles.css" media="screen" />
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgYf-wRFfzxje390QRO4FFuylhRUES2Qg&v=3.20&signed_in=false&libraries=places"></script> 
+<!--    <script src="markerwithlabel.js" type="text/javascript"></script> -->
+    <title>Averías-Flotas</title>
+<!--  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script> -->
+  
+    <script>
+  function initialize() {
+
+    var markers = [];
+    var map = new google.maps.Map(document.getElementById('map-canvas'), {
+      center: new google.maps.LatLng(37.748339, -1.060996),
+        zoom: 11,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+  
+    ///////////////////////
+    // Markers de coches //
+    ///////////////////////
+  
+    var carImage = 'car.png';
+    var carLatLng = [];
+    carLatLng[0] = new google.maps.LatLng(37.758339, -1.070996);
+    carLatLng[1] = new google.maps.LatLng(37.598339, -1.000996);
+    carLatLng[2] = new google.maps.LatLng(37.698339, -0.950996);
+    
+    var carMarker = [];
+    for (var j = 0; j < carLatLng.length; j++) {
+      var carMarkerPlotter = function(carMarker){
+          carMarker = new google.maps.Marker({
+          position: carLatLng[j],
+          map: map,
+          icon: carImage,
+        });
+      }(carMarker);
+    }
+    
+    /////////////////////////
+    // Markers de personas //
+    /////////////////////////
+    
+    var personImage = 'personSmall.png';
+    var personLatLng = [];
+    personLatLng[0] = new google.maps.LatLng(37.758338, -1.070997);
+    personLatLng[1] = new google.maps.LatLng(37.598338, -1.000997);
+    personLatLng[2] = new google.maps.LatLng(37.698338, -0.950997);
+    personLatLng[3] = new google.maps.LatLng(37.699339, -0.955996);
+  
+    var personMarker = [];
+    for (var j = 0; j < personLatLng.length; j++) {
+      var personMarkerPlotter = function(personMarker){
+          personMarker = new google.maps.Marker({
+          position: personLatLng[j],
+          map: map,
+          icon: personImage,
+        });
+      }(personMarker);
+    }
+  
+    // Create the search box and link it to the UI element.
+    var input = /** @type {HTMLInputElement} */(
+        document.getElementById('pac-input'));
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+  
+    var searchBox = new google.maps.places.SearchBox(
+      /** @type {HTMLInputElement} */(input));
+  
+    /////////////////////////////
+    // Listener del Text input //
+    /////////////////////////////
+
+    google.maps.event.addListener(searchBox, 'places_changed', function() {
+      var places = searchBox.getPlaces();
+  
+      if (places.length == 0) {
+        return;
+      }
+      
+      // For each place, get the icon, place name, and location.
+      for (var i = 0, place; place = places[i]; i++) {
+        
+        //////////////////////////////////////
+        // Calcular la ruta para cada coche //
+        //////////////////////////////////////
+        
+        var rendererOptions = [];
+        var directionsDisplay = [];
+        
+        for (var k = 0; k < carLatLng.length; k++) {
+          
+            rendererOptions[k] = { map: map };
+            directionsDisplay[k] = new google.maps.DirectionsRenderer(rendererOptions[k]); // Mirar a ver si hay que sacarlo fuera
+  
+            var request = {
+      			  origin: carLatLng[k],
+      			  destination: place.geometry.location,
+      			  travelMode: google.maps.DirectionsTravelMode.DRIVING
+      			};
+      
+      	    directionsService = new google.maps.DirectionsService();
+      	    var dir = function(directionsDisplay) {
+              directionsService.route(request, function (response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                  directionsDisplay.setDirections(response);
+                } else alert('Failed to get directions');
+              });
+            }(directionsDisplay[k]);
+          }
+          
+        }
+      });
+
+      ////////////////////////////////////
+      // Ventanas de info de los marker //
+      ////////////////////////////////////
+      
+      var contentString = '<div id="content">'+
+        '<div id="siteNotice">'+
+        '</div>'+
+        '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
+        '<div id="bodyContent">'+
+        '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
+        'sandstone rock formation in the southern part of the '+
+        'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
+        'south west of the nearest large town, Alice Springs; 450&#160;km '+
+        '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
+        'features of the Uluru - Kata Tjuta National Park. Uluru is '+
+        'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
+        'Aboriginal people of the area. It has many springs, waterholes, '+
+        'rock caves and ancient paintings. Uluru is listed as a World '+
+        'Heritage Site.</p>'+
+        '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
+        'https://en.wikipedia.org/w/index.php?title=Uluru</a> '+
+        '(last visited June 22, 2009).</p>'+
+        '</div>'+
+        '</div>';
+
+    
+     var infowindow = new google.maps.InfoWindow({
+         content: "Probando"
+     });
+  
+    
+      //google.maps.event.addListener(carMarker[1], 'click', function() {
+        infowindow.open(map,carMarker[1])
+      //});
+      //google.maps.event.addListener(carMarker[0], 'click', function() {
+        infowindow.open(marker.get('map'),carMarker[0])
+      //});
+      google.maps.event.addListener(carMarker[2], 'click', function() {
+        infowindow.open(map,carMarker[2])
+      });
+    }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+
+  </head>
+  
+  <body>
+    <div id="menu" class="dropSheet"></div>
+    <input id="pac-input" class="controls" type="text" placeholder="Introduce la dirección de la avería">
+    <div id="map-canvas"></div>
+  </body>
+</html>
