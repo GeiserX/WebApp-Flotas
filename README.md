@@ -16,7 +16,7 @@ Prototype web map for fleet breakdowns: type the breakdown address and it draws 
 
 ## Quick start
 
-Put a Google Maps JavaScript API key in [`www/index.html`](www/index.html) line 7 (Places and Directions enabled), then open `www/index.html` in a browser and type a breakdown address; you compare the routes yourself. The Shiny files (`server.R`, `ui.R`) hold no logic: `server.R` is an empty server and `ui.R` is commented out.
+Put a Google Maps API key in [`www/index.html`](www/index.html) line 7, from a Google Cloud project with billing on and the Maps JavaScript API, Places API and Directions API enabled, then open `www/index.html` in a browser and type a breakdown address; you compare the routes yourself. The Shiny files (`server.R`, `ui.R`) hold no logic: `server.R` is an empty server and `ui.R` is commented out.
 
 ## License
 
