@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "WebApp_Flotas",
+  "project_id": "23c6199a-07f4-4496-b5ee-e38b45cc6dd2"
+}
